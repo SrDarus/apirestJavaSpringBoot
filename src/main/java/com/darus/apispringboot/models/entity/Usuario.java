@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,16 +17,27 @@ import javax.persistence.TemporalType;
 public class Usuario implements Serializable{
 	
 	@Id
-	//@GeneratedValue
+	@Column(nullable=false, unique=true)
+	public String email;
 	public String rut;
+	@Column(nullable=false)
 	public int perfil;
+	@Column(nullable=false)
 	public String nombre;
 	public String apellido;
-	public Date fechaNacimiento;
+	@Column(nullable=false)
 	public String password;
-	@Column(name="fecha_creacion")
+	@Column(nullable=false)
 	@Temporal(TemporalType.DATE)
-	public Date fecha;
+	public Date fechaNacimiento;
+	@Temporal(TemporalType.DATE)
+	@Column(nullable=false)
+	public Date fechaCreacion;
+	
+	/*@PrePersist
+	public void prePersist() {
+		fechaCreacion = new Date();
+	}*/
 
 	public String getRut() {
 		return rut;
@@ -44,7 +56,14 @@ public class Usuario implements Serializable{
 	public void setPerfil(int perfil) {
 		this.perfil = perfil;
 	}
+	
+	public String getEmail() {
+		return email;
+	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 	public String getNombre() {
 		return nombre;
@@ -86,13 +105,13 @@ public class Usuario implements Serializable{
 	}
 
 
-	public Date getFecha() {
-		return fecha;
+	public Date getFechaCreacion() {
+		return fechaCreacion;
 	}
 
 
-	public void setFecha(Date fecha) {
-		this.fecha = fecha;
+	public void setFechaCreacion(Date fechaCreacion) {
+		this.fechaCreacion = fechaCreacion;
 	}
 
 	/**

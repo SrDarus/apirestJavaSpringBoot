@@ -1,3 +1,3 @@
-INSERT INTO Usuario (rut, fecha_nacimiento, fecha_creacion, nombre, password, perfil, usuario) VALUES ('162682946', '2020-04-29', '2020-04-29', 'claudio', 'Caradej1', '1', 'darus');
-INSERT INTO Usuario (rut, fecha_nacimiento, fecha_creacion, nombre, password, perfil, usuario) VALUES ('104444199', '2020-04-29', '2020-04-29', 'margarita', 'Caradej1', '2', 'magi');
-INSERT INTO Usuario (rut, fecha_nacimiento, fecha_creacion, nombre, password, perfil, usuario) VALUES ('164400550', '2020-04-29', '2020-04-29', 'cindy', 'lenardo22', '2', 'chichi');
+INSERT INTO Usuario (email, apellido, fecha_creacion, fecha_nacimiento, nombre, password, perfil, rut) VALUES ('claudio@gmail.com', 'vargas', '2020-01-01', '1986-09-02', 'claudio', 'Caradej1', 1, '162682946');
+INSERT INTO Usuario (email, apellido, fecha_creacion, fecha_nacimiento, nombre, password, perfil, rut) VALUES ('benja@gmail.com', 'vargas', '2020-01-01', '1986-09-02', 'claudio', 'Caradej1', 1, '162682946');
+INSERT INTO Usuario (email, apellido, fecha_creacion, fecha_nacimiento, nombre, password, perfil, rut) VALUES ('cindy@gmail.com', 'vargas', '2020-01-01', '1986-09-02', 'claudio', 'Caradej1', 1, '162682946');
