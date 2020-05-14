@@ -43,6 +43,25 @@ public class UsuarioRestController {
 		return usuarioService.findAll();
 	}*/
 	
+	@GetMapping("/usuario/obtenerUsuarios")
+	public ResponseEntity<?> findAll(){
+		List<Usuario> usuarioList = null;
+		Map<String, Object> response = new HashMap<>();
+		try {
+			usuarioList = usuarioService.findAll();
+			response.put("status", 200);
+			response.put("result", usuarioList);
+			response.put("message", "OK");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);			
+		}
+		catch(DataAccessException e) { 
+			response.put("status", 500);
+			response.put("result", null);
+			response.put("message", "Internal Server Error");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
 	@GetMapping("/usuario/obtenerUsuario/{email}")
 	public ResponseEntity<?> show(@PathVariable String email) {
 		Usuario usuario = null;
@@ -82,7 +101,7 @@ public class UsuarioRestController {
 			}*/
 			List<String> errors = result.getFieldErrors()
 					.stream()
-					.map(error -> error.getField()+" / " + error.getDefaultMessage())
+					.map(error -> error.getField()+"-"+error.getDefaultMessage())
 					.collect(Collectors.toList());
 			response.put("status", 400);
 			response.put("result", errors);
@@ -173,4 +192,5 @@ public class UsuarioRestController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
+	
 }
