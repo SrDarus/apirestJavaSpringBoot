@@ -1,14 +1,20 @@
 package com.darus.apispringboot.controllers;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,10 +71,24 @@ public class UsuarioRestController {
 	
 	@PostMapping("/usuario/registrarUsuario")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> create(@RequestBody Usuario usuario) {
+	public ResponseEntity<?> create(@Valid @RequestBody Usuario usuario, BindingResult result) {
 		Usuario newUsuario = null;
 		Usuario buscarUsuario = null;
 		Map<String, Object> response = new HashMap<>();
+		if(result.hasErrors()) {
+			/*List<String> errors = new ArrayList<>();
+			for(FieldError err: result.getFieldErrors()) {
+				errors.add(err.getDefaultMessage());
+			}*/
+			List<String> errors = result.getFieldErrors()
+					.stream()
+					.map(error -> error.getField()+" / " + error.getDefaultMessage())
+					.collect(Collectors.toList());
+			response.put("status", 400);
+			response.put("result", errors);
+			response.put("message", "Bad Request");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		}
 		try	{
 			buscarUsuario = usuarioService.findById(usuario.email);
 			if(buscarUsuario == null) {
@@ -96,9 +116,19 @@ public class UsuarioRestController {
 	
 	@PutMapping("/usuario/actualizarUsuario/{email}")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> update(@RequestBody Usuario usuario, @PathVariable String email) {
+	public ResponseEntity<?> update(@Valid @RequestBody Usuario usuario, BindingResult result, @PathVariable String email) {
 		Usuario usuarioDB = null;
-		Map<String, Object> response = new HashMap<>();
+		Map<String, Object> response = new HashMap<>();	
+		if(result.hasErrors()) {
+			List<String> errors = result.getFieldErrors()
+					.stream()
+					.map(error -> "Error: "+ error.getDefaultMessage())
+					.collect(Collectors.toList());
+			response.put("status", 400);
+			response.put("result", errors);
+			response.put("message", "Bad Request");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		}
 		try {
 			usuarioDB = usuarioService.findById(email);
 			usuarioDB.setEmail(usuario.getEmail());

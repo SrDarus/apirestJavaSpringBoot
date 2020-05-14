@@ -11,6 +11,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="usuario")
@@ -18,14 +21,18 @@ public class Usuario implements Serializable{
 	
 	@Id
 	@Column(nullable=false, unique=true)
+	@NotEmpty
+	@Email
 	public String email;
 	public String rut;
 	@Column(nullable=false)
 	public int perfil;
 	@Column(nullable=false)
+	@NotEmpty
 	public String nombre;
 	public String apellido;
 	@Column(nullable=false)
+	@Size(min=4, max=20)
 	public String password;
 	@Column(nullable=false)
 	@Temporal(TemporalType.DATE)
