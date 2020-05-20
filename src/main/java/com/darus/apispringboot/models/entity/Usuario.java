@@ -15,6 +15,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
+import org.springframework.web.multipart.MultipartFile;
+
 @Entity
 @Table(name="usuario")
 public class Usuario implements Serializable{
@@ -37,14 +39,23 @@ public class Usuario implements Serializable{
 	@Column(nullable=false)
 	@Temporal(TemporalType.DATE)
 	public Date fechaNacimiento;
-	@Temporal(TemporalType.DATE)
 	@Column(nullable=false)
+	@Temporal(TemporalType.DATE)
 	public Date fechaCreacion;
+	public String foto;
 	
 	/*@PrePersist
 	public void prePersist() {
 		fechaCreacion = new Date();
 	}*/
+
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
+	}
 
 	public String getRut() {
 		return rut;
