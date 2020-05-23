@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -43,48 +45,51 @@ import org.springframework.web.multipart.MultipartFile;
 import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
-@CrossOrigin(origins= {"http://localhost:4200"})
+@CrossOrigin(origins = { "http://localhost:4200" })
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
-	
+
 	@Autowired
 	private IUsuarioService usuarioService;
-	
+	private final Logger log = LoggerFactory.getLogger(UsuarioRestController.class);
+
 	/*
-	@GetMapping("/usuario/obtenerUsuarios")
-	public List<Usuario> index(){
-		return usuarioService.findAll();
-	}*/
-	
+	 * @GetMapping("/usuario/obtenerUsuarios") public List<Usuario> index(){ return
+	 * usuarioService.findAll(); }
+	 */
+
 	@GetMapping("/usuario/obtenerUsuario/{email}")
 	public ResponseEntity<?> show(@PathVariable String email) {
 		Usuario usuario = null;
 		Map<String, Object> response = new HashMap<>();
 		try {
-			usuario= usuarioService.findById(email);
-			if(usuario == null) {
+			usuario = usuarioService.findById(email);
+			if (usuario == null) {
+				System.out.print("******************************");
+				System.out.print(usuario);
 				response.put("status", 404);
 				response.put("result", null);
 				response.put("message", "Not Found");
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+				System.out.print("******************************");
+				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 			}
 			response.put("status", 200);
 			response.put("result", usuario);
 			response.put("message", "OK");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		}
-		catch(DataAccessException e) { 
+		} catch (DataAccessException e) {
 			response.put("status", 500);
-			response.put("result", null);
+			response.put("result", e);
 			response.put("message", "Internal Server Error");
-			//response.put("message", "ERROR: ".concat(e.getMostSpecificCause().getMessage()));
+			// response.put("message", "ERROR:
+			// ".concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@PostMapping("/usuario/obtenerUsuarios")
-	public ResponseEntity<?> findAll(){
+	public ResponseEntity<?> findAll() {
 		List<Usuario> usuarioList = null;
 		Map<String, Object> response = new HashMap<>();
 		try {
@@ -92,19 +97,17 @@ public class UsuarioRestController {
 			response.put("status", 200);
 			response.put("result", usuarioList);
 			response.put("message", "OK");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);			
-		}
-		catch(DataAccessException e) { 
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} catch (DataAccessException e) {
 			response.put("status", 500);
-			response.put("result", null);
+			response.put("result", e);
 			response.put("message", "Internal Server Error");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
-	
+
 	@PostMapping("/usuario/obtenerUsuarios/page/{page}")
-	public ResponseEntity<?> findAll(@PathVariable Integer page){
+	public ResponseEntity<?> findAll(@PathVariable Integer page) {
 		Page<Usuario> usuarioList = null;
 		Map<String, Object> response = new HashMap<>();
 		try {
@@ -113,73 +116,70 @@ public class UsuarioRestController {
 			response.put("status", 200);
 			response.put("result", usuarioList);
 			response.put("message", "OK");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);			
-		}
-		catch(DataAccessException e) { 
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} catch (DataAccessException e) {
 			response.put("status", 500);
-			response.put("result", null);
+			response.put("result", e);
 			response.put("message", "Internal Server Error");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@PostMapping("/usuario/registrarUsuario")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> create(@Valid @RequestBody Usuario usuario, BindingResult result) {
 		Usuario newUsuario = null;
 		Usuario buscarUsuario = null;
 		Map<String, Object> response = new HashMap<>();
-		if(result.hasErrors()) {
-			/*List<String> errors = new ArrayList<>();
-			for(FieldError err: result.getFieldErrors()) {
-				errors.add(err.getDefaultMessage());
-			}*/
-			List<String> errors = result.getFieldErrors()
-					.stream()
-					.map(error -> error.getField()+"-"+error.getDefaultMessage())
-					.collect(Collectors.toList());
+		if (result.hasErrors()) {
+			/*
+			 * List<String> errors = new ArrayList<>(); for(FieldError err:
+			 * result.getFieldErrors()) { errors.add(err.getDefaultMessage()); }
+			 */
+			List<String> errors = result.getFieldErrors().stream()
+					.map(error -> error.getField() + "-" + error.getDefaultMessage()).collect(Collectors.toList());
 			response.put("status", 400);
 			response.put("result", errors);
 			response.put("message", "Bad Request");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		}
-		try	{
+		try {
 			buscarUsuario = usuarioService.findById(usuario.email);
-			if(buscarUsuario == null) {
+			if (buscarUsuario == null) {
 				usuario.setFechaCreacion(new Date());
 
-				System.out.println("Fecha nacimiento"+ usuario.fechaNacimiento);
-				//usuario.setFechaNacimiento(new SimpleDateFormat("yyyy-MM-dd").format(usuario.fechaNacimiento));
-				newUsuario = usuarioService.save(usuario);	
-			}else {
+				System.out.println("Fecha nacimiento" + usuario.fechaNacimiento);
+				// usuario.setFechaNacimiento(new
+				// SimpleDateFormat("yyyy-MM-dd").format(usuario.fechaNacimiento));
+				newUsuario = usuarioService.save(usuario);
+			} else {
 				response.put("status", 409);
 				response.put("result", null);
-				response.put("message", "Conflict");		
+				response.put("message", "Conflict");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 			}
-		}
-		catch(DataAccessException e) {
+		} catch (DataAccessException e) {
 			response.put("status", 500);
-			response.put("result", null);
+			response.put("result", e);
 			response.put("message", "Internal Server Error");
-			//response.put("message", "ERROR: ".concat(e.getMostSpecificCause().getMessage()));
+			// response.put("message", "ERROR:
+			// ".concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		response.put("status", 200);
 		response.put("result", newUsuario);
-		response.put("message", "OK");		
+		response.put("message", "OK");
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
-	
+
 	@PutMapping("/usuario/actualizarUsuario/{email}")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> update(@Valid @RequestBody Usuario usuario, BindingResult result, @PathVariable String email) {
+	public ResponseEntity<?> update(@Valid @RequestBody Usuario usuario, BindingResult result,
+			@PathVariable String email) {
 		Usuario usuarioDB = null;
-		Map<String, Object> response = new HashMap<>();	
-		if(result.hasErrors()) {
-			List<String> errors = result.getFieldErrors()
-					.stream()
-					.map(error -> "Error: "+ error.getDefaultMessage())
+		Map<String, Object> response = new HashMap<>();
+		if (result.hasErrors()) {
+			List<String> errors = result.getFieldErrors().stream().map(error -> "Error: " + error.getDefaultMessage())
 					.collect(Collectors.toList());
 			response.put("status", 400);
 			response.put("result", errors);
@@ -192,24 +192,25 @@ public class UsuarioRestController {
 			usuarioDB.setApellido(usuario.getApellido());
 			usuarioDB.setFechaNacimiento(usuario.getFechaNacimiento());
 			usuarioDB.setNombre(usuario.getNombre());
-			usuario =  usuarioService.save(usuarioDB);
-			//usuarioDB.setFechaCreacion(usuario.getFechaCreacion());
-			//usuarioDB.setPerfil(usuario.getPerfil());
+			usuario = usuarioService.save(usuarioDB);
+			// usuarioDB.setFechaCreacion(usuario.getFechaCreacion());
+			// usuarioDB.setPerfil(usuario.getPerfil());
 			response.put("status", 200);
 			response.put("result", usuario);
 			response.put("message", "OK");
-			//response.put("message", "ERROR: ".concat(e.getMostSpecificCause().getMessage()));
+			// response.put("message", "ERROR:
+			// ".concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		}
-		catch(DataAccessException e) {
+		} catch (DataAccessException e) {
 			response.put("status", 500);
-			response.put("result", null);
+			response.put("result", e);
 			response.put("message", "Internal Server Error");
-			//response.put("message", "ERROR: ".concat(e.getMostSpecificCause().getMessage()));
+			// response.put("message", "ERROR:
+			// ".concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@DeleteMapping("usuario/eliminarUsuario/{email}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	public ResponseEntity<?> delete(@PathVariable String email) {
@@ -218,116 +219,99 @@ public class UsuarioRestController {
 
 			Usuario usuario = usuarioService.findById(email);
 			String nombreFotoAnterior = usuario.getFoto();
-			if(nombreFotoAnterior  == null || nombreFotoAnterior .length() > 0) {
+			if (nombreFotoAnterior == null || nombreFotoAnterior.length() > 0) {
 				Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
 				File archivoFotoAnterior = rutaFotoAnterior.toFile();
-				if(archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
+				if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
 					archivoFotoAnterior.delete();
 				}
 			}
-			usuarioService.delete(email);	
+			usuarioService.delete(email);
 			response.put("status", 200);
 			response.put("result", null);
 			response.put("message", "OK");
-			//response.put("message", "ERROR: ".concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);	
-		}
-		catch(DataAccessException e) {
+			// response.put("message", "ERROR:
+			// ".concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} catch (DataAccessException e) {
 			response.put("status", 500);
-			response.put("result", null);
+			response.put("result", e);
 			response.put("message", "Internal Server Error");
-			//response.put("message", "ERROR: ".concat(e.getMostSpecificCause().getMessage()));
+			// response.put("message", "ERROR:
+			// ".concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
-	
+
 	@PostMapping("usuario/subirFoto")
-	public ResponseEntity<?> upload(@RequestParam("imagen") MultipartFile imagen, @RequestParam("email") String email){
+	public ResponseEntity<?> upload(@RequestParam("imagen") MultipartFile imagen, @RequestParam("email") String email) {
+
 		Map<String, Object> response = new HashMap<>();
 		try {
 			Usuario usuario = usuarioService.findById(email);
-			if(!imagen.isEmpty()) {
-				String nombreArchivo = UUID.randomUUID().toString() + "_" +imagen.getOriginalFilename().replace(" ", "");
+			if (!imagen.isEmpty()) {
+				String nombreArchivo = UUID.randomUUID().toString() + "_"
+						+ imagen.getOriginalFilename().replace(" ", "");
 				Path rutaArchivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
+				log.info(rutaArchivo.toString());
 				try {
 					Files.copy(imagen.getInputStream(), rutaArchivo);
 					String nombreFotoAnterior = usuario.getFoto();
-					if(nombreFotoAnterior  != null && nombreFotoAnterior.length() > 0) {
-						System.out.print("****************************************");
+					if (nombreFotoAnterior != null && nombreFotoAnterior.length() > 0) {
+//						System.out.print("****************************************");
 						Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
 						System.out.print(rutaFotoAnterior);
 						File archivoFotoAnterior = rutaFotoAnterior.toFile();
-						if(archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
+						if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
 							archivoFotoAnterior.delete();
 						}
 					}
-					
-					usuario.setFoto(nombreArchivo);	
-					System.out.print("****************************************");
-					System.out.print(usuario.getFoto());
-					
+
+					usuario.setFoto(nombreArchivo);
 					usuarioService.save(usuario);
 					response.put("status", 200);
 					response.put("result", usuario);
 					response.put("message", "OK");
 					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-					
-				}catch(IOException e) {
+
+				} catch (IOException e) {
 					response.put("status", 405);
 					response.put("result", e.getMessage());
 					response.put("message", "Archivo no corresponde");
 					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 				}
-			}else {
+			} else {
 				response.put("status", 405);
 				response.put("result", null);
 				response.put("message", "Archivo no corresponde");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+		} catch (DataAccessException e) {
+			response.put("status", 500);
+			response.put("result", e);
+			response.put("message", "Internal Server Error");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		catch(DataAccessException e) {
-			response.put("status", 500);
-			response.put("result", null);
-			response.put("message", "Internal Server Error");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}	
 	}
-	
-	@PostMapping("usuario/img/{nombreFoto:.+}")
-	public ResponseEntity<?> verFoto(@PathVariable String nombreFoto){
-		Map<String, Object> response = new HashMap<>();
-		try {
-			Path rutaArchivo = Paths.get("uploads").resolve(nombreFoto);
-			Resource recurso = null;			
-			try {
-				recurso = new UrlResource(rutaArchivo.toUri());				
-			} 
-			catch(MalformedURLException e) {
-				response.put("status", 500);
-				response.put("result", null);
-				response.put("message", "Internal Server Error");
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-			}
-			if(!recurso.exists() && !recurso.isOpen()) {
-				response.put("status", 404);
-				response.put("result", null);
-				response.put("message", "Not Found");
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
-			}
-			HttpHeaders httpHeaders = new HttpHeaders(); 
-			httpHeaders.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+recurso.getFilename());
-			response.put("status", 200);
-			response.put("result", null);
-			response.put("message", "OK");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		}	
 
-		catch(DataAccessException e) {
-			response.put("status", 500);
-			response.put("result", null);
-			response.put("message", "Internal Server Error");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}	
+	@GetMapping("usuario/img/{nombreFoto:.+}")
+	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto) {
+
+		Path rutaArchivo = Paths.get("uploads").resolve(nombreFoto);
+		Resource recurso = null;
+		try {
+			recurso = new UrlResource(rutaArchivo.toUri());
+		} catch (MalformedURLException e) {
+			return new ResponseEntity<Resource>(recurso, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		if (!recurso.exists() && !recurso.isOpen()) {
+			return new ResponseEntity<Resource>(recurso, HttpStatus.NOT_FOUND);
+		}
+		HttpHeaders httpHeader = new HttpHeaders();
+		httpHeader.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
+
+		return new ResponseEntity<Resource>(recurso, httpHeader, HttpStatus.OK);
+
 	}
-	
+
 }
