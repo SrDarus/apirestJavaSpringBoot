@@ -1,18 +1,11 @@
 package com.darus.apispringboot.controllers;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -21,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -43,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.darus.apispringboot.models.entity.Usuario;
+import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
 @CrossOrigin(origins = { "http://localhost:4200" })
@@ -52,7 +45,10 @@ public class UsuarioRestController {
 
 	@Autowired
 	private IUsuarioService usuarioService;
-	private final Logger log = LoggerFactory.getLogger(UsuarioRestController.class);
+	@Autowired
+	private IUploadFileService uploadFileService;
+
+	//private final Logger log = LoggerFactory.getLogger(UsuarioRestController.class);
 
 	/*
 	 * @GetMapping("/usuario/obtenerUsuarios") public List<Usuario> index(){ return
@@ -216,102 +212,65 @@ public class UsuarioRestController {
 	public ResponseEntity<?> delete(@PathVariable String email) {
 		Map<String, Object> response = new HashMap<>();
 		try {
-
 			Usuario usuario = usuarioService.findById(email);
 			String nombreFotoAnterior = usuario.getFoto();
-			if (nombreFotoAnterior == null || nombreFotoAnterior.length() > 0) {
-				Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
-				File archivoFotoAnterior = rutaFotoAnterior.toFile();
-				if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
-					archivoFotoAnterior.delete();
-				}
-			}
+			boolean result =  uploadFileService.aliminar(nombreFotoAnterior);
 			usuarioService.delete(email);
 			response.put("status", 200);
-			response.put("result", null);
+			response.put("result", result);
 			response.put("message", "OK");
-			// response.put("message", "ERROR:
-			// ".concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		} catch (DataAccessException e) {
 			response.put("status", 500);
 			response.put("result", e);
 			response.put("message", "Internal Server Error");
-			// response.put("message", "ERROR:
-			// ".concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@PostMapping("usuario/subirFoto")
 	public ResponseEntity<?> upload(@RequestParam("imagen") MultipartFile imagen, @RequestParam("email") String email) {
-
 		Map<String, Object> response = new HashMap<>();
-		try {
-			Usuario usuario = usuarioService.findById(email);
-			if (!imagen.isEmpty()) {
-				String nombreArchivo = UUID.randomUUID().toString() + "_"
-						+ imagen.getOriginalFilename().replace(" ", "");
-				Path rutaArchivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
-				log.info(rutaArchivo.toString());
-				try {
-					Files.copy(imagen.getInputStream(), rutaArchivo);
-					String nombreFotoAnterior = usuario.getFoto();
-					if (nombreFotoAnterior != null && nombreFotoAnterior.length() > 0) {
-//						System.out.print("****************************************");
-						Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
-						System.out.print(rutaFotoAnterior);
-						File archivoFotoAnterior = rutaFotoAnterior.toFile();
-						if (archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
-							archivoFotoAnterior.delete();
-						}
-					}
-
-					usuario.setFoto(nombreArchivo);
-					usuarioService.save(usuario);
-					response.put("status", 200);
-					response.put("result", usuario);
-					response.put("message", "OK");
-					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-
-				} catch (IOException e) {
-					response.put("status", 405);
-					response.put("result", e.getMessage());
-					response.put("message", "Archivo no corresponde");
-					return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-				}
-			} else {
+		Usuario usuario = usuarioService.findById(email);
+		if (!imagen.isEmpty()) {
+//			Path rutaArchivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
+//			log.info(rutaArchivo.toString());
+			String nombreArchivo = null;
+			try {
+				nombreArchivo = uploadFileService.copiar(imagen);
+			} catch (IOException e) {
 				response.put("status", 405);
-				response.put("result", null);
+				response.put("result", e.getMessage());
 				response.put("message", "Archivo no corresponde");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} catch (DataAccessException e) {
-			response.put("status", 500);
-			response.put("result", e);
-			response.put("message", "Internal Server Error");
+			String nombreFotoAnterior = usuario.getFoto();
+			uploadFileService.aliminar(nombreFotoAnterior);
+			usuario.setFoto(nombreArchivo);
+			usuarioService.save(usuario);
+			response.put("status", 200);
+			response.put("result", usuario);
+			response.put("message", "OK");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} else {
+			response.put("status", 405);
+			response.put("result", null);
+			response.put("message", "Archivo dañado o formato no corresponde");
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@GetMapping("usuario/img/{nombreFoto:.+}")
 	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto) {
-
-		Path rutaArchivo = Paths.get("uploads").resolve(nombreFoto);
 		Resource recurso = null;
 		try {
-			recurso = new UrlResource(rutaArchivo.toUri());
-		} catch (MalformedURLException e) {
-			return new ResponseEntity<Resource>(recurso, HttpStatus.INTERNAL_SERVER_ERROR);
+			recurso = uploadFileService.obtenerFoto(nombreFoto);				
 		}
-		if (!recurso.exists() && !recurso.isOpen()) {
-			return new ResponseEntity<Resource>(recurso, HttpStatus.NOT_FOUND);
+		catch(MalformedURLException e) {
+			e.printStackTrace();
 		}
 		HttpHeaders httpHeader = new HttpHeaders();
 		httpHeader.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
-
 		return new ResponseEntity<Resource>(recurso, httpHeader, HttpStatus.OK);
-
 	}
-
 }
