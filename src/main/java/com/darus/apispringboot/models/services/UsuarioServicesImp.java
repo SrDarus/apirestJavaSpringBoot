@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.darus.apispringboot.models.dao.IUsuarioDao;
+import com.darus.apispringboot.models.entity.Perfil;
 import com.darus.apispringboot.models.entity.Usuario;
 
 @Service
@@ -41,6 +42,11 @@ public class UsuarioServicesImp implements IUsuarioService{
 	@Transactional
 	public void delete(String email) {
 		usuarioDao.deleteById(email);
+	}
+	@Override
+	@Transactional(readOnly=true)
+	public List<Perfil> findAllPerfiles() {
+		return usuarioDao.findAllPerfiles();
 	}
 
 }

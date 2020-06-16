@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.darus.apispringboot.models.entity.Perfil;
 import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
@@ -47,16 +48,46 @@ public class UsuarioRestController {
 	private IUsuarioService usuarioService;
 	@Autowired
 	private IUploadFileService uploadFileService;
+	
+	String newLine = System.getProperty("line.separator");//This will retrieve line separator dependent on OS.
 
-	//private final Logger log = LoggerFactory.getLogger(UsuarioRestController.class);
+	// private final Logger log =
+	// LoggerFactory.getLogger(UsuarioRestController.class);
 
 	/*
 	 * @GetMapping("/usuario/obtenerUsuarios") public List<Usuario> index(){ return
 	 * usuarioService.findAll(); }
 	 */
+	
+		
+	@GetMapping("/usuarios")
+	public List<Usuario> index() {
+		return usuarioService.findAll();
+	}
+	
+	
+
+	@GetMapping("/usuario/obtenerPerfiles")
+	public ResponseEntity<?> getPerfiles() {
+		List<?> listPerfiles= null;
+		Map<String, Object> response = new HashMap<>();
+		try {
+			listPerfiles = usuarioService.findAllPerfiles();
+			response.put("status", 200);
+			response.put("result", listPerfiles);
+			response.put("message", "OK");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} catch (DataAccessException e) {
+			response.put("status", 500);
+			response.put("result", e);
+			response.put("message", "Internal Server Error");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
 
 	@GetMapping("/usuario/obtenerUsuario/{email}")
 	public ResponseEntity<?> show(@PathVariable String email) {
+		System.out.print("******************************"+ this.newLine);
 		Usuario usuario = null;
 		Map<String, Object> response = new HashMap<>();
 		try {
@@ -140,11 +171,14 @@ public class UsuarioRestController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		}
 		try {
-			buscarUsuario = usuarioService.findById(usuario.email);
+			buscarUsuario = usuarioService.findById(usuario.getEmail());
 			if (buscarUsuario == null) {
 				usuario.setFechaCreacion(new Date());
-
-				System.out.println("Fecha nacimiento" + usuario.fechaNacimiento);
+				System.out.println("Fecha nacimiento" + usuario.getFechaNacimiento());
+				Perfil perfil = new Perfil();
+				perfil.setIdPerfil(2);
+				perfil.setNombre("usuario");
+				usuario.setPerfil(perfil);
 				// usuario.setFechaNacimiento(new
 				// SimpleDateFormat("yyyy-MM-dd").format(usuario.fechaNacimiento));
 				newUsuario = usuarioService.save(usuario);
@@ -183,14 +217,20 @@ public class UsuarioRestController {
 			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 		}
 		try {
-			usuarioDB = usuarioService.findById(email);
-			usuarioDB.setEmail(usuario.getEmail());
+			usuarioDB = usuarioService.findById(email); 
+		    System.out.println("*******************************************************" + newLine);
+		    System.out.println("*******************************************************" + newLine);
+			System.out.print("222"+usuarioDB.getRut());
+			
+			usuarioDB.setRut(usuario.getRut());
+			usuarioDB.setPerfil(usuario.getPerfil());
+			usuarioDB.setNombre(usuario.getNombre());
 			usuarioDB.setApellido(usuario.getApellido());
 			usuarioDB.setFechaNacimiento(usuario.getFechaNacimiento());
-			usuarioDB.setNombre(usuario.getNombre());
+			
 			usuario = usuarioService.save(usuarioDB);
 			// usuarioDB.setFechaCreacion(usuario.getFechaCreacion());
-			// usuarioDB.setPerfil(usuario.getPerfil());
+			usuarioDB.setPerfil(usuario.getPerfil());
 			response.put("status", 200);
 			response.put("result", usuario);
 			response.put("message", "OK");
@@ -214,7 +254,7 @@ public class UsuarioRestController {
 		try {
 			Usuario usuario = usuarioService.findById(email);
 			String nombreFotoAnterior = usuario.getFoto();
-			boolean result =  uploadFileService.aliminar(nombreFotoAnterior);
+			boolean result = uploadFileService.aliminar(nombreFotoAnterior);
 			usuarioService.delete(email);
 			response.put("status", 200);
 			response.put("result", result);
@@ -264,9 +304,8 @@ public class UsuarioRestController {
 	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto) {
 		Resource recurso = null;
 		try {
-			recurso = uploadFileService.obtenerFoto(nombreFoto);				
-		}
-		catch(MalformedURLException e) {
+			recurso = uploadFileService.obtenerFoto(nombreFoto);
+		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}
 		HttpHeaders httpHeader = new HttpHeaders();

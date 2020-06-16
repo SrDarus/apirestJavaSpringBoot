@@ -2,20 +2,25 @@ package com.darus.apispringboot.models.entity;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 @Table(name="usuario")
@@ -25,29 +30,51 @@ public class Usuario implements Serializable{
 	@Column(nullable=false, unique=true)
 	@NotEmpty
 	@Email
-	public String email;
-	public String rut;
-	@Column(nullable=false)
-	public int perfil;
+	private  String email;
+	@Column(unique = true, length = 20)
+	private  String rut;
 	@Column(nullable=false)
 	@NotEmpty
-	public String nombre;
-	public String apellido;
-	@Column(nullable=false)
-	@Size(min=4, max=20)
-	public String password;
-	@Column(nullable=false)
-	@Temporal(TemporalType.DATE)
-	public Date fechaNacimiento;
+	private  String nombre;
+	private  String apellido;
+	@Column(length = 60)
+	private String password;
 	@Column(nullable=false)
 	@Temporal(TemporalType.DATE)
-	public Date fechaCreacion;
-	public String foto;
+	private  Date fechaNacimiento;
+	@Column(nullable=false)
+	@Temporal(TemporalType.DATE)
+	private  Date fechaCreacion;
+	private String foto;
+	@Column(nullable=false)
+	private Boolean enabled;
+
+	@ManyToOne(optional=false, cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+	@JoinColumn(name="idPerfil")
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+	private Perfil perfil;
+	
+	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@JoinTable(
+		name="user_authorities", 
+		joinColumns= @JoinColumn(name="idUsuario"),
+		inverseJoinColumns= @JoinColumn(name="idRole"),
+		uniqueConstraints= {@UniqueConstraint(columnNames= {"idUsuario", "idRole"})}
+	)
+	private List<Role> roles;
 	
 	/*@PrePersist
 	public void prePersist() {
 		fechaCreacion = new Date();
 	}*/
+
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
 
 	public String getFoto() {
 		return foto;
@@ -57,22 +84,20 @@ public class Usuario implements Serializable{
 		this.foto = foto;
 	}
 
+	public Boolean getEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	public String getRut() {
 		return rut;
 	}
 
 	public void setRut(String rut) {
 		this.rut = rut;
-	}
-
-
-	public int getPerfil() {
-		return perfil;
-	}
-
-
-	public void setPerfil(int perfil) {
-		this.perfil = perfil;
 	}
 	
 	public String getEmail() {
@@ -131,6 +156,18 @@ public class Usuario implements Serializable{
 	public void setFechaCreacion(Date fechaCreacion) {
 		this.fechaCreacion = fechaCreacion;
 	}
+	
+	
+
+	public Perfil getPerfil() {
+		return perfil;
+	}
+
+	public void setPerfil(Perfil perfil) {
+		this.perfil = perfil;
+	}
+
+
 
 	/**
 	 * 

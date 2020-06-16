@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.darus.apispringboot.models.entity.Perfil;
 import com.darus.apispringboot.models.entity.Usuario;
 
 public interface IUsuarioService {
@@ -18,6 +19,8 @@ public interface IUsuarioService {
 	public Usuario save(Usuario usuario);
 	
 	public void delete(String email);
+
+	public List<Perfil> findAllPerfiles();
 	
 	
 }
