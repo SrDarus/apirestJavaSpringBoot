@@ -50,13 +50,9 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {
 		JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter(); 
+		jwtAccessTokenConverter.setSigningKey(JwtConfig.LLAVE_SECRETA);
 		System.out.println("------>jwtAccessTokenConverter"+ jwtAccessTokenConverter);
 		return jwtAccessTokenConverter;
-		
-
-//	    JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-//	    converter.setVerifierKey(signingKey);
-//	    return converter;
 	}
 	
 	
