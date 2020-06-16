@@ -16,15 +16,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.darus.apispringboot.models.dao.IRepositoryDao;
+import com.darus.apispringboot.models.dao.IUsuarioDao;
 import com.darus.apispringboot.models.entity.Usuario;
 
 @Service
-public class RepositoryService implements UserDetailsService{
+public class RepositoryService implements UserDetailsService, IRepositoryService {
 
 	private Logger logger = LoggerFactory.getLogger(RepositoryService.class);
 	
 	@Autowired
-	private IRepositoryDao repositoryService;
+	private IRepositoryDao repositoryDao;
 
 //	@Autowired
 //	private IUsuarioDao usuarioService;
@@ -32,20 +33,23 @@ public class RepositoryService implements UserDetailsService{
 	@Override
 	@Transactional(readOnly=true)	
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		Usuario usuario = repositoryService.findByEmail(email);
+		Usuario usuario = repositoryDao.findByEmail(email);
 		if(usuario == null) {
 			logger.error("********* usuario no existe");
 			throw new UsernameNotFoundException("No existe el usuawrio "+ email);
-		}
-		System.out.println("rut: "+usuario.getRoles());
-		
-		
+		} 
 		List<GrantedAuthority> authorities = usuario.getRoles()
 				.stream()
 				.map(role -> new SimpleGrantedAuthority(role.getNombre()))
 				.peek(authority -> logger.info("Role: " + authority.getAuthority()))
 				.collect(Collectors.toList());
 		return new User(usuario.getEmail(), usuario.getPassword(), usuario.getEnabled(), true, true, true, authorities);
+	}
+
+	@Override
+	public Usuario findByEmail(String email) {
+		Usuario usuario = repositoryDao.findByEmail(email);
+		return usuario;
 	}
 
 }
