@@ -20,6 +20,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -54,19 +55,7 @@ public class UsuarioRestController {
 	// private final Logger log =
 	// LoggerFactory.getLogger(UsuarioRestController.class);
 
-	/*
-	 * @GetMapping("/usuario/obtenerUsuarios") public List<Usuario> index(){ return
-	 * usuarioService.findAll(); }
-	 */
 	
-		
-	@GetMapping("/usuarios")
-	public List<Usuario> index() {
-		return usuarioService.findAll();
-	}
-	
-	
-
 	@GetMapping("/usuario/obtenerPerfiles")
 	public ResponseEntity<?> getPerfiles() {
 		List<?> listPerfiles= null;
@@ -115,6 +104,8 @@ public class UsuarioRestController {
 		}
 	}
 
+
+	@Secured("ROLE_ADMIN")
 	@PostMapping("/usuario/obtenerUsuarios")
 	public ResponseEntity<?> findAll() {
 		List<Usuario> usuarioList = null;
@@ -133,6 +124,7 @@ public class UsuarioRestController {
 		}
 	}
 
+	@Secured("ROLE_ADMIN")
 	@PostMapping("/usuario/obtenerUsuarios/page/{page}")
 	public ResponseEntity<?> findAll(@PathVariable Integer page) {
 		Page<Usuario> usuarioList = null;
@@ -219,7 +211,6 @@ public class UsuarioRestController {
 		try {
 			usuarioDB = usuarioService.findById(email); 
 		    System.out.println("*******************************************************" + newLine);
-		    System.out.println("*******************************************************" + newLine);
 			System.out.print("222"+usuarioDB.getRut());
 			
 			usuarioDB.setRut(usuario.getRut());
@@ -268,7 +259,7 @@ public class UsuarioRestController {
 		}
 	}
 
-	@PostMapping("usuario/subirFoto")
+	@PostMapping("usuario/img/subirFoto")
 	public ResponseEntity<?> upload(@RequestParam("imagen") MultipartFile imagen, @RequestParam("email") String email) {
 		Map<String, Object> response = new HashMap<>();
 		Usuario usuario = usuarioService.findById(email);

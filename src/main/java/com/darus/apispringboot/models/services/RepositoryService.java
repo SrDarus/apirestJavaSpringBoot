@@ -47,6 +47,7 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 	}
 
 	@Override
+	@Transactional(readOnly=true)
 	public Usuario findByEmail(String email) {
 		Usuario usuario = repositoryDao.findByEmail(email);
 		return usuario;
