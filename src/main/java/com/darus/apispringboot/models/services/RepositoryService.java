@@ -45,7 +45,7 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 				.collect(Collectors.toList());
 		return new User(usuario.getEmail(), usuario.getPassword(), usuario.getEnabled(), true, true, true, authorities);
 	}
-
+ 
 	@Override
 	@Transactional(readOnly=true)
 	public Usuario findByEmail(String email) {

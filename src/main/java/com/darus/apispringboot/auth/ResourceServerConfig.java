@@ -18,12 +18,12 @@ import org.springframework.web.filter.CorsFilter;
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
-
+	
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 //		http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/clientes", "/api/clientes/page/**", "/api/uploads/img/**").permitAll()
 		http.authorizeRequests()
-		.antMatchers(HttpMethod.POST, "/api/usuario/registrarUsuario", "/api/usuario/img/**").permitAll()
+		.antMatchers(HttpMethod.GET, "/api/usuario/registrarUsuario", "/api/usuario/img/**").permitAll()
 //		.antMatchers(HttpMethod.POST, "/api/usuario/obtenerUsuarios/page/{page}", "/api/usuario/obtenerUsuarios").hasAnyRole("ADMIN")
 //		.antMatchers("/api/usuario/**").hasRole("ADMIN")
 		.anyRequest().authenticated()
@@ -34,7 +34,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter{
 	@Bean
 	public CorsConfigurationSource  corsConfigurationSource() {
 		CorsConfiguration config = new CorsConfiguration();
-		config.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
+		config.setAllowedOrigins(Arrays.asList("http://localhost:4200", "*"));
 		config.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
 		config.setAllowCredentials(true);
 		config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));

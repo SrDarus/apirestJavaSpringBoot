@@ -35,12 +35,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.darus.apispringboot.models.entity.Perfil;
 import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
-@CrossOrigin(origins = { "http://localhost:4200" })
+@CrossOrigin(origins = { "http://localhost:4200", "*" })
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
@@ -55,24 +54,6 @@ public class UsuarioRestController {
 	// private final Logger log =
 	// LoggerFactory.getLogger(UsuarioRestController.class);
 
-	
-	@GetMapping("/usuario/obtenerPerfiles")
-	public ResponseEntity<?> getPerfiles() {
-		List<?> listPerfiles= null;
-		Map<String, Object> response = new HashMap<>();
-		try {
-			listPerfiles = usuarioService.findAllPerfiles();
-			response.put("status", 200);
-			response.put("result", listPerfiles);
-			response.put("message", "OK");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
-		} catch (DataAccessException e) {
-			response.put("status", 500);
-			response.put("result", e);
-			response.put("message", "Internal Server Error");
-			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-	}
 
 	@GetMapping("/usuario/obtenerUsuario/{email}")
 	public ResponseEntity<?> show(@PathVariable String email) {
@@ -167,10 +148,6 @@ public class UsuarioRestController {
 			if (buscarUsuario == null) {
 				usuario.setFechaCreacion(new Date());
 				System.out.println("Fecha nacimiento" + usuario.getFechaNacimiento());
-				Perfil perfil = new Perfil();
-				perfil.setIdPerfil(2);
-				perfil.setNombre("usuario");
-				usuario.setPerfil(perfil);
 				// usuario.setFechaNacimiento(new
 				// SimpleDateFormat("yyyy-MM-dd").format(usuario.fechaNacimiento));
 				newUsuario = usuarioService.save(usuario);
@@ -214,14 +191,12 @@ public class UsuarioRestController {
 			System.out.print("222"+usuarioDB.getRut());
 			
 			usuarioDB.setRut(usuario.getRut());
-			usuarioDB.setPerfil(usuario.getPerfil());
 			usuarioDB.setNombre(usuario.getNombre());
 			usuarioDB.setApellido(usuario.getApellido());
 			usuarioDB.setFechaNacimiento(usuario.getFechaNacimiento());
 			
 			usuario = usuarioService.save(usuarioDB);
 			// usuarioDB.setFechaCreacion(usuario.getFechaCreacion());
-			usuarioDB.setPerfil(usuario.getPerfil());
 			response.put("status", 200);
 			response.put("result", usuario);
 			response.put("message", "OK");
@@ -259,6 +234,8 @@ public class UsuarioRestController {
 		}
 	}
 
+
+	@Secured({"ROLE_ADMIN", "ROLE_USER"})
 	@PostMapping("usuario/img/subirFoto")
 	public ResponseEntity<?> upload(@RequestParam("imagen") MultipartFile imagen, @RequestParam("email") String email) {
 		Map<String, Object> response = new HashMap<>();
@@ -291,8 +268,12 @@ public class UsuarioRestController {
 		}
 	}
 
+	
 	@GetMapping("usuario/img/{nombreFoto:.+}")
 	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto) {
+
+	    System.out.println("*******************************************************" + newLine);
+		System.out.print("nombre foto"+nombreFoto);
 		Resource recurso = null;
 		try {
 			recurso = uploadFileService.obtenerFoto(nombreFoto);

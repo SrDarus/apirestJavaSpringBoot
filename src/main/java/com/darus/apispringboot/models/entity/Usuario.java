@@ -28,7 +28,6 @@ public class Usuario implements Serializable{
 	
 	@Id
 	@Column(nullable=false, unique=true)
-	@NotEmpty
 	@Email
 	private  String email;
 	@Column(unique = true, length = 20)
@@ -49,17 +48,12 @@ public class Usuario implements Serializable{
 	@Column(nullable=false)
 	private Boolean enabled;
 
-	@ManyToOne(optional=false, cascade = CascadeType.ALL, fetch=FetchType.LAZY)
-	@JoinColumn(name="idPerfil")
-	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-	private Perfil perfil;
-	
 	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(
 		name="user_authorities", 
-		joinColumns= @JoinColumn(name="idUsuario"),
+		joinColumns= @JoinColumn(name="email"),
 		inverseJoinColumns= @JoinColumn(name="idRole"),
-		uniqueConstraints= {@UniqueConstraint(columnNames= {"idUsuario", "idRole"})}
+		uniqueConstraints= {	@UniqueConstraint(columnNames= {"email", "idRole"})}
 	)
 	private List<Role> roles;
 	
@@ -157,17 +151,6 @@ public class Usuario implements Serializable{
 		this.fechaCreacion = fechaCreacion;
 	}
 	
-	
-
-	public Perfil getPerfil() {
-		return perfil;
-	}
-
-	public void setPerfil(Perfil perfil) {
-		this.perfil = perfil;
-	}
-
-
 
 	/**
 	 * 
