@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.darus.apispringboot.models.dao.IRepositoryDao;
-import com.darus.apispringboot.models.dao.IUsuarioDao;
 import com.darus.apispringboot.models.entity.Usuario;
 
 @Service
@@ -33,11 +32,13 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 	@Override
 	@Transactional(readOnly=true)	
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+		System.out.println("email: "+email);
 		Usuario usuario = repositoryDao.findByEmail(email);
 		if(usuario == null) {
 			logger.error("********* usuario no existe");
-			throw new UsernameNotFoundException("No existe el usuawrio "+ email);
+			throw new UsernameNotFoundException("No existe el usuario "+ email);
 		} 
+		System.out.println("usuario email: "+usuario.getEmail());
 		List<GrantedAuthority> authorities = usuario.getRoles()
 				.stream()
 				.map(role -> new SimpleGrantedAuthority(role.getNombre()))

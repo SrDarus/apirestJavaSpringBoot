@@ -19,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
@@ -39,7 +40,7 @@ import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
-@CrossOrigin(origins = { "http://localhost:4200", "*" })
+@CrossOrigin(origins = { "http://localhost:4200", "*"})
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
@@ -171,10 +172,12 @@ public class UsuarioRestController {
 		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 
-	@PutMapping("/usuario/actualizarUsuario/{email}")
+	
+	@PutMapping(value="/usuario/actualizarUsuario/{email}", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> update(@Valid @RequestBody Usuario usuario, BindingResult result,
 			@PathVariable String email) {
+		System.out.println(usuario.getEmail());
 		Usuario usuarioDB = null;
 		Map<String, Object> response = new HashMap<>();
 		if (result.hasErrors()) {
@@ -187,8 +190,7 @@ public class UsuarioRestController {
 		}
 		try {
 			usuarioDB = usuarioService.findById(email); 
-		    System.out.println("*******************************************************" + newLine);
-			System.out.print("222"+usuarioDB.getRut());
+			System.out.println("get rut: "+usuarioDB.getRut());
 			
 			usuarioDB.setRut(usuario.getRut());
 			usuarioDB.setNombre(usuario.getNombre());

@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.UniqueConstraint;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -28,6 +29,7 @@ public class Usuario implements Serializable{
 	
 	@Id
 	@Column(nullable=false, unique=true)
+//	@NotEmpty
 	@Email
 	private  String email;
 	@Column(unique = true, length = 20)
@@ -47,7 +49,7 @@ public class Usuario implements Serializable{
 	private String foto;
 	@Column(nullable=false)
 	private Boolean enabled;
-
+	
 	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(
 		name="user_authorities", 
