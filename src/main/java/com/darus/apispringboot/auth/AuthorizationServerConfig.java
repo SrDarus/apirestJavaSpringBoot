@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
-import src.main.java.com.bolsadeideas.springboot.backend.apirest.auth.JwtConfig;
 
 @Configuration
 @EnableAuthorizationServer
