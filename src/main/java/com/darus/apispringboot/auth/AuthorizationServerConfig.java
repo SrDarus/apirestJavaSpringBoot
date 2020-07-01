@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
+import src.main.java.com.bolsadeideas.springboot.backend.apirest.auth.JwtConfig;
+
 @Configuration
 @EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter{
@@ -59,8 +61,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {
 		JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter(); 
-		jwtAccessTokenConverter.setSigningKey(JwtConfig.LLAVE_SECRETA);
-//		System.out.println("------>jwtAccessTokenConverter"+ jwtAccessTokenConverter);
+		jwtAccessTokenConverter.setSigningKey(JwtConfig.RSA_PRIVADA);
+		jwtAccessTokenConverter.setVerifierKey(JwtConfig.RSA_PUBLICA);
 		return jwtAccessTokenConverter;
 	}
 	
