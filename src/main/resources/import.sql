@@ -6,7 +6,7 @@ INSERT INTO USUARIO (email, nombre, apellido, rut, fecha_creacion, fecha_nacimie
 INSERT INTO ROLE (nombre) VALUES ('ROLE_ADMIN');
 INSERT INTO ROLE (nombre) VALUES ('ROLE_USER');
 
-INSERT INTO USER_AUTHORITIES (email, id_role) VALUES ('claudio@gmail.com', 1);
-INSERT INTO USER_AUTHORITIES (email, id_role) VALUES ('a@gmail.com', 2);
+INSERT INTO usuarios_roles (email, id_role) VALUES ('claudio@gmail.com', 1);
+INSERT INTO usuarios_roles (email, id_role) VALUES ('a@gmail.com', 2);
 
 
