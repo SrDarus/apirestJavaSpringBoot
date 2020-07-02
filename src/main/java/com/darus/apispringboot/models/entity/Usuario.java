@@ -49,13 +49,12 @@ public class Usuario implements Serializable{
 	private String foto;
 	@Column(nullable=false)
 	private Boolean enabled;
-	
 	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinTable(
-		name="user_authorities", 
+		name="usuarios_roles", 
 		joinColumns= @JoinColumn(name="email"),
-		inverseJoinColumns= @JoinColumn(name="idRole"),
-		uniqueConstraints= {	@UniqueConstraint(columnNames= {"email", "idRole"})}
+		inverseJoinColumns= @JoinColumn(name="id_role"),
+		uniqueConstraints= {	@UniqueConstraint(columnNames= {"email", " id_role"})}
 	)
 	private List<Role> roles;
 	

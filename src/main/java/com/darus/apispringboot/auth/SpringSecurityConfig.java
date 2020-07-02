@@ -31,7 +31,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(this.usuarioService).passwordEncoder(passwordEncoder());
 	}
 
-	@Bean("authenticationManager")
+	@Bean
 	@Override
 	protected AuthenticationManager authenticationManager() throws Exception {
 		return super.authenticationManager();

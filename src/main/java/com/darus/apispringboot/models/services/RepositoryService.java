@@ -26,8 +26,6 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 	@Autowired
 	private IRepositoryDao repositoryDao;
 
-//	@Autowired
-//	private IUsuarioDao usuarioService;
 	
 	@Override
 	@Transactional(readOnly=true)	
