@@ -17,8 +17,8 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 
-//@Configuration
-//@EnableAuthorizationServer
+@Configuration
+@EnableAuthorizationServer
 public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter{
 	
 	@Autowired
@@ -60,8 +60,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Bean
 	public JwtAccessTokenConverter accessTokenConverter() {
 		JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter(); 
-		jwtAccessTokenConverter.setSigningKey(JwtConfig.RSA_PRIVADA);
-		jwtAccessTokenConverter.setVerifierKey(JwtConfig.RSA_PUBLICA);
+//		jwtAccessTokenConverter.setSigningKey(JwtConfig.RSA_PRIVADA);
+//		jwtAccessTokenConverter.setVerifierKey(JwtConfig.RSA_PUBLICA);
 		return jwtAccessTokenConverter;
 	}
 	
