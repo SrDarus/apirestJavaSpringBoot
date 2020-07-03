@@ -40,7 +40,8 @@ import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
-@CrossOrigin(origins = { "http://localhost:4200", "*"})
+//@CrossOrigin(origins = { "http://localhost:4200", "*"})
+@CrossOrigin(origins = {"https://app-angular-material-820c0.web.app", "*"})
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
@@ -274,8 +275,7 @@ public class UsuarioRestController {
 	@GetMapping("usuario/img/{nombreFoto:.+}")
 	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto) {
 
-	    System.out.println("*******************************************************" + newLine);
-		System.out.print("nombre foto"+nombreFoto);
+		System.out.println("nombre foto: "+nombreFoto);
 		Resource recurso = null;
 		try {
 			recurso = uploadFileService.obtenerFoto(nombreFoto);
