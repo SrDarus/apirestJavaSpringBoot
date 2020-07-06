@@ -291,4 +291,14 @@ public class UsuarioRestController {
 		httpHeader.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
 		return new ResponseEntity<Resource>(recurso, httpHeader, HttpStatus.OK);
 	}
+	
+	@GetMapping("usuario/test")
+	public ResponseEntity<Resource> test() {
+		
+
+		Map<String, Object> response = new HashMap<>();
+		List<Usuario> usuarioList = null;
+		usuarioList = usuarioService.findAll();
+		response.put("usuario", usuarioList);
+	}
 }
