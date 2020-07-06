@@ -37,7 +37,7 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 
 	@PostMapping("/login")
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-//		System.out.println("email: "+email);
+		System.out.println("email: "+email);
 		Usuario usuario = repositoryDao.findByEmail(email);
 		if(usuario == null) {
 			logger.error("********* usuario no existe");
