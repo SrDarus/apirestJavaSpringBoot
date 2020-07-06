@@ -37,7 +37,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		return super.authenticationManager();
 	}
 	
-	
+	//    //
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
@@ -45,8 +45,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		.anyRequest().authenticated()
 		.and()
 		.csrf().disable()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-	    .and().logout().logoutSuccessUrl("/").permitAll();
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 	}
 	
 	
