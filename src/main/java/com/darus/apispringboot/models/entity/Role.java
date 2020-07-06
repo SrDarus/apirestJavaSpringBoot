@@ -17,6 +17,9 @@ public class Role implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
+	@Column(unique=true, length=20)
+	private String nombre; 
+	
 	public Long getId() {
 		return id;
 	}
@@ -25,14 +28,6 @@ public class Role implements Serializable{
 	public void setId(Long id) {
 		this.id = id;
 	}
-
-
-
-
-	@Column(unique=true, length=20)
-	private String nombre; 
-	
-
 
 	public String getNombre() {
 		return nombre;

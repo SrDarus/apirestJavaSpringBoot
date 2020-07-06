@@ -2,6 +2,7 @@ package com.darus.apispringboot.controllers;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -36,12 +37,13 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.darus.apispringboot.models.entity.Role;
 import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
-//@CrossOrigin(origins = { "http://localhost:4200", "*"})
-@CrossOrigin(origins = {"https://app-angular-material-820c0.web.app", "*"})
+@CrossOrigin(origins = { "http://localhost:4200", "*"})
+//@CrossOrigin(origins = {"https://app-angular-material-820c0.web.app", "*"})
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
@@ -59,18 +61,14 @@ public class UsuarioRestController {
 
 	@GetMapping("/usuario/obtenerUsuario/{email}")
 	public ResponseEntity<?> show(@PathVariable String email) {
-		System.out.print("******************************"+ this.newLine);
 		Usuario usuario = null;
 		Map<String, Object> response = new HashMap<>();
 		try {
 			usuario = usuarioService.findById(email);
 			if (usuario == null) {
-				System.out.print("******************************");
-				System.out.print(usuario);
 				response.put("status", 404);
 				response.put("result", null);
 				response.put("message", "Not Found");
-				System.out.print("******************************");
 				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 			}
 			response.put("status", 200);
@@ -152,6 +150,12 @@ public class UsuarioRestController {
 				System.out.println("Fecha nacimiento" + usuario.getFechaNacimiento());
 				// usuario.setFechaNacimiento(new
 				// SimpleDateFormat("yyyy-MM-dd").format(usuario.fechaNacimiento));
+				Role role = new Role();
+				role.setId((long) 2);
+				role.setNombre("ROLE_USER");
+				List<Role> roles= new ArrayList<Role>();
+				roles.add(role);
+				usuario.setRoles(roles);
 				newUsuario = usuarioService.save(usuario);
 			} else {
 				response.put("status", 409);
@@ -274,11 +278,12 @@ public class UsuarioRestController {
 	
 	@GetMapping("usuario/img/{nombreFoto:.+}")
 	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto) {
-
+		
 		System.out.println("nombre foto: "+nombreFoto);
 		Resource recurso = null;
 		try {
 			recurso = uploadFileService.obtenerFoto(nombreFoto);
+			System.out.println("recurso" + recurso);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		}

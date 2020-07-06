@@ -14,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.darus.apispringboot.models.dao.IRepositoryDao;
 import com.darus.apispringboot.models.entity.Usuario;
@@ -29,6 +30,7 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 	
 	@Override
 	@Transactional(readOnly=true)	
+	@PostMapping("oauth/token")
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //		System.out.println("email: "+email);
 		Usuario usuario = repositoryDao.findByEmail(email);
