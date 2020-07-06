@@ -21,10 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.darus.apispringboot.models.dao.IRepositoryDao;
 import com.darus.apispringboot.models.entity.Usuario;
 
-//@Service
-
-@RestController
-@RequestMapping("/api")
+@Service
 public class RepositoryService implements UserDetailsService, IRepositoryService {
 
 	private Logger logger = LoggerFactory.getLogger(RepositoryService.class);
@@ -32,10 +29,9 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 	@Autowired
 	private IRepositoryDao repositoryDao;
 
-	
-//	@Override
 
-	@PostMapping("/login")
+	@Override
+	@Transactional(readOnly=true)
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		System.out.println("email: "+email);
 		Usuario usuario = repositoryDao.findByEmail(email);
