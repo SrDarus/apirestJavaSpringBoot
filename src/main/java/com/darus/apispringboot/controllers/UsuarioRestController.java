@@ -293,12 +293,13 @@ public class UsuarioRestController {
 	}
 	
 	@GetMapping("usuario/test")
-	public ResponseEntity<Resource> test() {
+	public ResponseEntity<?> test() {
 		
-
 		Map<String, Object> response = new HashMap<>();
 		List<Usuario> usuarioList = null;
 		usuarioList = usuarioService.findAll();
+		System.out.println("test: "+usuarioList);
 		response.put("usuario", usuarioList);
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
 	}
 }
