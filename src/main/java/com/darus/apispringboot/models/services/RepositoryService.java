@@ -29,7 +29,6 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 
 	
 	@Override
-	@Transactional(readOnly=true)	
 	@PostMapping("login/token")
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //		System.out.println("email: "+email);
