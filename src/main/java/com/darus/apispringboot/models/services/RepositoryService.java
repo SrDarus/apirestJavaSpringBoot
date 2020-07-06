@@ -29,7 +29,7 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 
 	
 	@Override
-	@PostMapping("login/token")
+	@PostMapping("/login")
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //		System.out.println("email: "+email);
 		Usuario usuario = repositoryDao.findByEmail(email);
