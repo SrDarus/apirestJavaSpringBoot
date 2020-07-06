@@ -49,7 +49,7 @@ public class Usuario implements Serializable{
 	private String foto;
 	@Column(nullable=false)
 	private Boolean enabled;
-	@ManyToMany(fetch=FetchType.LAZY, cascade=CascadeType.ALL)
+	@ManyToMany(fetch=FetchType.LAZY)
 	@JoinTable(
 		name="usuarios_roles", 
 		joinColumns= @JoinColumn(name="email"),
