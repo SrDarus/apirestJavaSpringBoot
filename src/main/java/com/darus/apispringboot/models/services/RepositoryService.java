@@ -15,11 +15,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.darus.apispringboot.models.dao.IRepositoryDao;
 import com.darus.apispringboot.models.entity.Usuario;
 
-@Service
+//@Service
+
+@RestController
+@RequestMapping("/api")
 public class RepositoryService implements UserDetailsService, IRepositoryService {
 
 	private Logger logger = LoggerFactory.getLogger(RepositoryService.class);
@@ -28,7 +33,8 @@ public class RepositoryService implements UserDetailsService, IRepositoryService
 	private IRepositoryDao repositoryDao;
 
 	
-	@Override
+//	@Override
+
 	@PostMapping("/login")
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //		System.out.println("email: "+email);
