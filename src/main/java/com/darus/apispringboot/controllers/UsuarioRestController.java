@@ -152,7 +152,7 @@ public class UsuarioRestController {
 				// SimpleDateFormat("yyyy-MM-dd").format(usuario.fechaNacimiento));
 				Role role = new Role();
 				role.setId((long) 2);
-				role.setNombre("ROLE_USER");
+				role.setNombre(usuario.getEmail());
 				List<Role> roles= new ArrayList<Role>();
 				roles.add(role);
 				usuario.setRoles(roles);
