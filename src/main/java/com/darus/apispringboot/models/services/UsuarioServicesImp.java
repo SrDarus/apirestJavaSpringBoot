@@ -9,14 +9,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.darus.apispringboot.models.dao.IFacturaDao;
 import com.darus.apispringboot.models.dao.IUsuarioDao;
+import com.darus.apispringboot.models.entity.Factura;
 import com.darus.apispringboot.models.entity.Usuario;
 
 @Service
 public class UsuarioServicesImp implements IUsuarioService{
-
+	
 	@Autowired
 	private IUsuarioDao usuarioDao;
+	@Autowired
+	private IFacturaDao facturaDao;
+	
 	@Override
 	@Transactional(readOnly=true)
 	public List<Usuario> findAll() {
@@ -41,6 +46,33 @@ public class UsuarioServicesImp implements IUsuarioService{
 	@Transactional
 	public void delete(String email) {
 		usuarioDao.deleteById(email);
+	}
+	
+	/*
+	 * FACTURA
+	 * */
+	@Override
+	@Transactional(readOnly = true)
+	public Factura findFacturaById(Long id) {
+		return facturaDao.findById(id).orElse(null);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Factura> findAllFactura() {
+		return (List<Factura>) facturaDao.findAll();
+	}
+	@Override
+	@Transactional
+	public Factura saveFactura(Factura factura) {
+		// TODO Auto-generated method stub
+		return facturaDao.save(factura);
+	}
+	@Override
+	@Transactional
+	public void deleteFacturaById(Long id) {
+		// TODO Auto-generated method stub
+		facturaDao.deleteById(id);
 	}
 
 

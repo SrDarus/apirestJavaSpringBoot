@@ -13,4 +13,9 @@ public interface IUploadFileService {
 	public String copiar(MultipartFile archivo) throws IOException;
 	public boolean aliminar(String nombreFoto);
 	public Path getPath(String nombreFoto);
+
+	public Resource obtenerFotoCarousel(String nombreFoto) throws MalformedURLException;
+	public String copiarCarousel(MultipartFile archivo) throws IOException;
+	public boolean aliminarCarousel(String nombreFoto);
+	public Path getPathCarousel(String nombreFoto);
 }

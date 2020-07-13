@@ -58,6 +58,10 @@ public class Usuario implements Serializable{
 	)
 	private List<Role> roles;
 	
+	@JsonIgnoreProperties(value={"usuario", "hibernateLazyInitializer", "handler"}, allowSetters=true)
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "usuario", cascade = CascadeType.ALL)
+	private List<Factura> facturas;
+	
 	/*@PrePersist
 	public void prePersist() {
 		fechaCreacion = new Date();

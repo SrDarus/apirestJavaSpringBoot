@@ -56,4 +56,32 @@ public class UploadFileServiceImp implements IUploadFileService {
 		return Paths.get(DIRECTORIO_UPLOAD).resolve(nombreFoto);
 	}
 
+	@Override
+	public Resource obtenerFotoCarousel(String nombreFoto) throws MalformedURLException {
+		Path rutaArchivo = getPath(nombreFoto);
+		Resource recurso = new UrlResource(rutaArchivo.toUri());
+		if (!recurso.exists() && !recurso.isOpen()) {
+			recurso = null;
+		}
+		return recurso;
+	}
+
+	@Override
+	public String copiarCarousel(MultipartFile archivo) throws IOException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean aliminarCarousel(String nombreFoto) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Path getPathCarousel(String nombreFoto) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

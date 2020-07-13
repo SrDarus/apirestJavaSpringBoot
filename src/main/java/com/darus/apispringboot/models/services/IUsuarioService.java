@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import com.darus.apispringboot.models.entity.Factura;
 import com.darus.apispringboot.models.entity.Usuario;
 
 public interface IUsuarioService {
@@ -18,5 +19,16 @@ public interface IUsuarioService {
 	public Usuario save(Usuario usuario);
 	
 	public void delete(String email);
+	
+	/*
+	 * Facturas
+	 * */
+	public Factura findFacturaById(Long id);
+	
+	public List<Factura> findAllFactura();
+	
+	public Factura saveFactura(Factura factura);
+	
+	public void deleteFacturaById(Long id);
 	
 }
