@@ -40,8 +40,8 @@ import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
-@CrossOrigin(origins = { "http://localhost:4200", "*"})
-//@CrossOrigin(origins = {"https://app-angular-material-820c0.web.app", "*"})
+//@CrossOrigin(origins = { "http://localhost:4200", "*"})
+@CrossOrigin(origins = {"https://app-angular-material-820c0.web.app", "*"})
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
