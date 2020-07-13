@@ -8,7 +8,7 @@ INSERT INTO roles (nombre) VALUES ('ROLE_ADMIN');
 INSERT INTO roles (nombre) VALUES ('ROLE_USER');
 
 INSERT INTO usuarios_roles (email, id_role) VALUES ('claudio@gmail.com', 1);
-INSERT INTO usuarios_roles (email, id_role) VALUES ('a@gmail.com', 2);;
+INSERT INTO usuarios_roles (email, id_role) VALUES ('a@gmail.com', 2);
 
 
 /* Populate tabla productos */
@@ -29,4 +29,4 @@ INSERT INTO facturas_items (id_factura, id_producto, cantidad) VALUES(1, 4, 2);
 INSERT INTO facturas_items (id_factura, id_producto, cantidad) VALUES(1, 5, 2);
 
 INSERT INTO facturas (descripcion, observacion, usuario_email, create_at) VALUES('Factura Bicicleta', 'Alguna nota importante!', "a@gmail.com", NOW());
-INSERT INTO lineas_factura (cantidad, id_factura, id_producto) VALUES(3, 2, 6);
+INSERT INTO facturas_items (cantidad, id_factura, id_producto) VALUES(3, 2, 6);
