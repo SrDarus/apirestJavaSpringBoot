@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.darus.apispringboot.models.dao.IFacturaDao;
+import com.darus.apispringboot.models.dao.IProductoDao;
 import com.darus.apispringboot.models.dao.IUsuarioDao;
 import com.darus.apispringboot.models.entity.Factura;
+import com.darus.apispringboot.models.entity.Producto;
 import com.darus.apispringboot.models.entity.Usuario;
 
 @Service
@@ -21,6 +23,8 @@ public class UsuarioServicesImp implements IUsuarioService{
 	private IUsuarioDao usuarioDao;
 	@Autowired
 	private IFacturaDao facturaDao;
+	@Autowired
+	private IProductoDao productoDao;
 	
 	@Override
 	@Transactional(readOnly=true)
@@ -74,6 +78,20 @@ public class UsuarioServicesImp implements IUsuarioService{
 		// TODO Auto-generated method stub
 		facturaDao.deleteById(id);
 	}
-
+	
+	/*
+	 * PRODUCTOS
+	 * */
+	@Override
+	@Transactional(readOnly = true)
+	public Producto findProductoById(Long id) {
+		return productoDao.findById(id).orElse(null);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<Producto> findAllProductos() {
+		return (List<Producto>) productoDao.findAll();
+	}
 
 }

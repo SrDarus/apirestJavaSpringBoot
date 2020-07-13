@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.darus.apispringboot.models.entity.Factura;
+import com.darus.apispringboot.models.entity.Producto;
 import com.darus.apispringboot.models.entity.Usuario;
 
 public interface IUsuarioService {
@@ -30,5 +31,9 @@ public interface IUsuarioService {
 	public Factura saveFactura(Factura factura);
 	
 	public void deleteFacturaById(Long id);
+
+	public Producto findProductoById(Long id);
+	
+	public List<Producto> findAllProductos();
 	
 }

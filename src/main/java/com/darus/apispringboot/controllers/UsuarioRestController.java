@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.darus.apispringboot.models.entity.Producto;
 import com.darus.apispringboot.models.entity.Usuario;
 import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
@@ -296,6 +297,24 @@ public class UsuarioRestController {
 		HttpHeaders httpHeader = new HttpHeaders();
 		httpHeader.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
 		return new ResponseEntity<Resource>(recurso, httpHeader, HttpStatus.OK);
+	}
+	
+	@GetMapping("/productos")
+	public ResponseEntity<?> findAllProductos() {
+		List<Producto> productos= null;
+		Map<String, Object> response = new HashMap<>();
+		try {
+			productos = usuarioService.findAllProductos();
+			response.put("status", 200);
+			response.put("result", productos);
+			response.put("message", "OK");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		} catch (DataAccessException e) {
+			response.put("status", 500);
+			response.put("result", e);
+			response.put("message", "Internal Server Error");
+			return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
 	
