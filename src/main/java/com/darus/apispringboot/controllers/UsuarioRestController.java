@@ -42,7 +42,7 @@ import com.darus.apispringboot.models.services.IUploadFileService;
 import com.darus.apispringboot.models.services.IUsuarioService;
 
 //@CrossOrigin(origins = { "http://localhost:4200", "*"})
-@CrossOrigin(origins = {"https://app-angular-material-820c0.web.app", "*"})
+@CrossOrigin(origins = {"https://app-angular-material-820c0.web.app", "*"}) 
 @RestController
 @RequestMapping("/api")
 public class UsuarioRestController {
@@ -106,7 +106,7 @@ public class UsuarioRestController {
 	}
 
 	@Secured("ROLE_ADMIN")
-	@PostMapping("/usuarios/page/{page}")
+	@GetMapping("/usuarios/page/{page}")
 	public ResponseEntity<?> findAll(@PathVariable Integer page) {
 		Page<Usuario> usuarioList = null;
 		Map<String, Object> response = new HashMap<>();
