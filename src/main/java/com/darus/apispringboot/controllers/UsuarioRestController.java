@@ -317,6 +317,28 @@ public class UsuarioRestController {
 		}
 	}
 	
+	@PostMapping("/usuario/excel")
+	public ResponseEntity<?> handleFileUpload() {
+
+
+		Map<String, Object> response = new HashMap<>();		
+		response.put("status", 200);
+		response.put("result", null);
+		response.put("message", "OK");
+		return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+		/*
+		Resource recurso = null;
+		try {
+			recurso = uploadFileService.obtenerFotoCarousel("carousel/"+nombreFoto);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		HttpHeaders httpHeader = new HttpHeaders();
+		httpHeader.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
+		return new ResponseEntity<Resource>(recurso, httpHeader, HttpStatus.OK);
+		*/
+	}
+	
 	
 	
 }
